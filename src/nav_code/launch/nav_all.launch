@@ -1,0 +1,8 @@
+<launch>
+    <include file="$(find nav_code)/launch/map_server.launch" />
+    <include file="$(find nav_code)/launch/amcl.launch" />
+    <include file="$(find nav_code)/launch/move_base.launch" />
+    <include file="$(find ep_description)/launch/ep_description.launch"/>
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find nav_code)/config/nav_all.rviz"/>
+    <node pkg="nav_code" type="odom_pub.py" name="odom_pub_tf"/>
+</launch>

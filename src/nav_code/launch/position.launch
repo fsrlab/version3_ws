@@ -1,0 +1,12 @@
+<launch>
+    <!-- set map -->
+    <arg name="map" default="gmapping.yaml" />
+    <!-- run map server-->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find nav_code)/map/$(arg map)"/>
+    <!-- robot_description -->
+    <include file="$(find ep_description)/launch/ep_description.launch"/>
+    <!-- run amcl-->
+    <include file="$(find nav_code)/launch/amcl.launch" />
+    <!-- open rviz -->
+    <node pkg="rviz" type="rviz" name="rviz"/>
+</launch>
