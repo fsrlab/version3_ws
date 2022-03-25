@@ -73,6 +73,8 @@ def go(target_x,target_y,target_alpha):
             # part of control to position
             if th>3.14:
                 th-=6.28
+            elif th<-3.14:
+                th+=6.28
             twist = Twist()
             # twist.linear.x = 0
             # twist.linear.y = 0
@@ -116,96 +118,7 @@ def go(target_x,target_y,target_alpha):
             rospy.logwarn("error is: %s",e)
         rate.sleep()
 
-def turn(WAY):
 
-    rate = rospy.Rate(20)
-    while True:
-        try:
-            # part of tf
-            tf_car = buffer.lookup_transform("base_link","map",rospy.Time(0))
-            x_car = tf_car.transform.translation.x
-            y_car = tf_car.transform.translation.y 
-            z_car = tf_car.transform.rotation.z
-            w_car = tf_car.transform.rotation.w
-            _,_,th= tf.transformations.euler_from_quaternion([0,0,z_car,w_car])
-            print(th)
-            if WAY==1:
-                twist = Twist()
-                twist.linear.x = 0
-                twist.linear.y = 0
-                twist.angular.z = 0.5
-                pub.publish(twist)
-                if abs(th)>3.1:
-                    twist = Twist()
-                    twist.linear.x = 0
-                    twist.linear.y = 0
-                    twist.angular.z = 0
-                    pub.publish(twist)
-                    break
-            elif WAY==2:
-                twist = Twist()
-                twist.linear.x = 0
-                twist.linear.y = 0
-                twist.angular.z = -0.5
-                pub.publish(twist)
-
-                if abs(z_car)>0.7:
-                    twist = Twist()
-                    twist.linear.x = 0
-                    twist.linear.y = 0
-                    twist.angular.z = 0
-                    pub.publish(twist)
-                    break
-            elif WAY==4:
-                twist = Twist()
-                twist.linear.x = 0
-                twist.linear.y = 0
-                twist.angular.z =0.5
-                pub.publish(twist)
-
-                if abs(th)>3.1:
-                    twist = Twist()
-                    twist.linear.x = 0
-                    twist.linear.y = 0
-                    twist.angular.z = 0
-                    pub.publish(twist)
-                    break
-                
-
-            elif WAY==3 or WAY==5:
-                    return
-
-        except Exception as e:
-            rospy.logwarn("error is: %s",e)
-
-        rate.sleep()
-
-def face_0():
-    rate = rospy.Rate(5)
-    while not rospy.is_shutdown():
-        try:
-            # part of tf
-            tf_car = buffer.lookup_transform("base_link","map",rospy.Time(0))
-            x_car = tf_car.transform.translation.x
-            y_car = tf_car.transform.translation.y 
-            z_car = tf_car.transform.rotation.z
-            w_car = tf_car.transform.rotation.w
-            _,_,th= tf.transformations.euler_from_quaternion([0,0,z_car,w_car])
-            # part of control
-            twist = Twist()
-            twist.linear.x = 0
-            twist.linear.y = 0
-            twist.angular.z = -pid(0,th)
-            print(pid(0,th))
-            if abs(th)<0.015:
-                twist.angular.z = 0
-                pub.publish(twist)
-                break
-            pub.publish(twist)
-        except Exception as e:
-            rospy.logwarn("error is: %s",e)
-
-        rate.sleep()
 
 def arm_up():
         # up
@@ -213,7 +126,7 @@ def arm_up():
     pose.position.x = 0.21
     pose.position.y = 0.1
     arm_position_pub.publish(pose)
-    rospy.sleep(1)
+    rospy.sleep(0.5)
 
 def arm_down():
     # down
@@ -221,19 +134,19 @@ def arm_down():
     pose.position.x = 0.21
     pose.position.y = -0.02
     arm_position_pub.publish(pose)
-    rospy.sleep(1)
+    rospy.sleep(0.5)
 
 def arm_catch():
     point = Point()
     point.x = 1
     arm_gripper_pub.publish(point)
-    rospy.sleep(1)
+    rospy.sleep(0.5)
 
 def arm_relax():
     point = Point()
     point.x = 0
     arm_gripper_pub.publish(point)
-    rospy.sleep(1)
+    rospy.sleep(0.5)
 
 def pid(target,now):
     global integral,last
